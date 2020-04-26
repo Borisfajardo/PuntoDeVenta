@@ -5,7 +5,7 @@ USE punto_de_venta;
 
 CREATE TABLE clientes
 (
-id INTEGER(11) PRIMARY KEY,
+id VARCHAR(20) PRIMARY KEY,
 nombre VARCHAR(50) NOT NULL,
 direccion VARCHAR(50),
 telefono VARCHAR(10)
@@ -22,7 +22,7 @@ stock INTEGER DEFAULT 0
 
 CREATE TABLE usuarios
 (
-id VARCHAR(10) PRIMARY KEY,
+id VARCHAR(20) PRIMARY KEY,
 nombre VARCHAR(50) NOT NULL,
 contrasena VARCHAR(32) NOT NULL,
 rol VARCHAR(20)
@@ -188,8 +188,11 @@ DELIMITER ;
 
 /******************************************************************************/
 
-DELIMITER $
 
+
+
+/*---------------------------------------------------------------------------------------------------------------*/
+DELIMITER $
 CREATE  FUNCTION restarStock(id_articulo INTEGER,id_producto INT,cantidad_del_producto INTEGER) RETURNS int(11)
 BEGIN 
 
@@ -208,10 +211,81 @@ RETURN stock_inicial - cantidad_articulo_en_producto * cantidad_del_producto;
 
 end $
 DELIMITER ;
+/*--------------------------------------------------------------------------------------------------------------*/
 
+
+/***********************************************************************************/
 SET SQL_SAFE_UPDATES=0;
+/***********************************************************************************/
 
+/*---------------------------------------------------------------------------------------*/
 INSERT INTO usuarios(id,nombre,contrasena,rol) VALUES (1234,'MATIXA',MD5('1234'),'ADMINISTRADOR');
+/*---------------------------------------------------------------------------------------*/
+
+
+
+/*-----------------------------------------------------------------------*/
+/*Esta tabla crea el detalle del ingreso o actualiacion del inventario.*/
+/*-----------------------------------------------------------------------*/
+/*Esta tabla crea el detalle del ingreso o actualiacion del inventario.*/
+CREATE TABLE ajuste_inventario 
+(
+	id INTEGER PRIMARY KEY AUTO_INCREMENT, 
+    id_articulo INTEGER,
+    id_usuario VARCHAR(20),
+    descripcion VARCHAR(100) NOT NULL, 
+    fecha DATE NOT NULL,
+    FOREIGN KEY (id_articulo) REFERENCES articulos(id),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+);
+/*------------------------------------------------------------------------*/
+
+
+
+/*---------------------------------------------------------------------------------*/
+DELIMITER $
+CREATE  FUNCTION sumarStock(id_articulo INTEGER, cantidad INTEGER) RETURNS int(11)
+BEGIN 
+
+DECLARE stock_inicial INT;
+
+/*SELECT detalle_productos.cantidad INTO cantidad_articulo_en_producto FROM detalle_productos, articulos, productos WHERE productos.id = detalle_productos.id_producto AND articulos.id = detalle_productos.id_articulo;*/
+
+SELECT stock INTO stock_inicial FROM articulos WHERE id = id_articulo;
+
+/*UPDATE  articulos SET stock  = stock_inicial + stock_ingreso WHERE id = id_articulo;**/
+
+RETURN stock_inicial + cantidad;  
+
+end $
+DELIMITER ;
+
+/*---------------------------------------------------------------------------------*/
+
+
+
+/*------------------------------------------------------------------------------------*/
+DELIMITER $
+CREATE  FUNCTION restarStockSinProducto(id_articulo INT, cantidad INT) RETURNS int(11)
+BEGIN 
+
+DECLARE stock_inicial INT;
+/*DECLARE cantidad_articulo_en_producto INT;
+
+/*SELECT detalle_productos.cantidad INTO cantidad_articulo_en_producto FROM detalle_productos, articulos, productos WHERE productos.id = detalle_productos.id_producto AND articulos.id = detalle_productos.id_articulo;*/
+
+/*SELECT detalle_productos.cantidad INTO cantidad_articulo_en_producto FROM detalle_productos WHERE detalle_productos.id_producto = id_producto AND  detalle_productos.id_articulo = id_articulo;*/
+
+SELECT stock INTO stock_inicial FROM articulos WHERE id = id_articulo;
+
+/*UPDATE  articulos SET stock  = stock_inicial + stock_ingreso WHERE id = id_articulo;**/
+
+RETURN stock_inicial - cantidad;  
+
+end $
+DELIMITER ;
+/*------------------------------------------------------------------------------------------*/
+
 
 
 
