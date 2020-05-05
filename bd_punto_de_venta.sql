@@ -80,7 +80,7 @@ CREATE TABLE proveedores
 id INTEGER(11) PRIMARY KEY AUTO_INCREMENT,
 razon_social VARCHAR(50) NULL,
 tipo_documento VARCHAR(15) NULL,
-num_documento VARCHAR(11) UNIQUE NULL,
+num_documento VARCHAR(15) UNIQUE NULL,
 telefono VARCHAR(10) NULL
 )engine = InnoDB;
 
@@ -214,9 +214,6 @@ DELIMITER ;
 /*--------------------------------------------------------------------------------------------------------------*/
 
 
-/***********************************************************************************/
-SET SQL_SAFE_UPDATES=0;
-/***********************************************************************************/
 
 /*---------------------------------------------------------------------------------------*/
 INSERT INTO usuarios(id,nombre,contrasena,rol) VALUES (1234,'MATIXA',MD5('1234'),'ADMINISTRADOR');
@@ -285,6 +282,9 @@ RETURN stock_inicial - cantidad;
 end $
 DELIMITER ;
 /*------------------------------------------------------------------------------------------*/
+/***********************************************************************************/
+SET SQL_SAFE_UPDATES=0;
+/***********************************************************************************/
 
 
 
